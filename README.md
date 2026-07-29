@@ -65,7 +65,7 @@ honest limitations.
 
 ## Installation
 
-After the first release is published:
+Install the package from PyPI:
 
 ```console
 python -m pip install django-fetch-guard
@@ -261,7 +261,7 @@ python -m pytest
 
 ## Current status
 
-`0.1.0a1` is an alpha. The core API, legacy compatibility engine, DRF mixin,
+`0.1.0` is the initial alpha release. The core API, legacy compatibility engine, DRF mixin,
 pytest fixture, system check, and cross-version CI matrix are implemented. The
 tests include Django's request client and a live HTTP server.
 Rich call-site diagnostics and production audit sampling are planned for later

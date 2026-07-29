@@ -5,6 +5,8 @@ Changelog, and releases use semantic versioning.
 
 ## Unreleased
 
+## 0.1.0 - 2026-07-29
+
 ### Added
 
 - Cross-version fetch policies for Django 4.2 through 6.1.
@@ -14,7 +16,3 @@ Changelog, and releases use semantic versioning.
 - Per-action Django REST Framework policies.
 - Pytest fixture and Django system checks.
 - Django client and live-server integration tests with measured query counts.
-
-## 0.1.0a1 - Not released
-
-Initial development release.
