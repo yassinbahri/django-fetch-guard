@@ -5,17 +5,34 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "django-fetch-guard"
 version = "0.1.0"
-description = "Explicit ORM fetch policies for Django 4.2 and newer"
+description = "Prevent Django N+1 queries and accidental lazy database fetches with explicit ORM policies"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
     { name = "Yassin Bahri", email = "131185064+yassinbahri@users.noreply.github.com" },
 ]
+keywords = [
+    "django",
+    "django-orm",
+    "n+1",
+    "n-plus-one",
+    "query-optimization",
+    "database-performance",
+    "lazy-loading",
+    "drf",
+    "pytest",
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
     "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
+    "Framework :: Django :: 6.1",
     "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
@@ -23,6 +40,9 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Topic :: Database",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Testing",
 ]
 dependencies = [
     "Django>=4.2,<6.2",

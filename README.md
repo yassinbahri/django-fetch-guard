@@ -5,7 +5,7 @@
 <h1 align="center">django-fetch-guard</h1>
 
 <p align="center">
-  <strong>Make accidental ORM queries impossible—or batch them automatically.</strong>
+  <strong>Prevent Django N+1 queries and accidental lazy database fetches—with explicit contracts or automatic batching.</strong>
 </p>
 
 <p align="center">
