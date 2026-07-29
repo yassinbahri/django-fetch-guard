@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">How django-fetch-guard handles related-object queries</title>
+  <desc id="desc">Comparison of normal mode producing one plus N queries, peers mode producing two queries, and strict mode using one explicit joined query or blocking an unloaded relation.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071a14"/>
+      <stop offset="1" stop-color="#0b1110"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#35d07f"/>
+      <stop offset="1" stop-color="#28b8c7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="7" stdDeviation="10" flood-color="#000" flood-opacity=".32"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#79e6ae"/>
+    </marker>
+    <style>
+      .heading { fill: #f3fff8; font: 700 30px Inter, Segoe UI, sans-serif; }
+      .subheading { fill: #a8c9b8; font: 400 16px Inter, Segoe UI, sans-serif; }
+      .lane-title { fill: #f3fff8; font: 700 20px Inter, Segoe UI, sans-serif; }
+      .label { fill: #e6f5ec; font: 600 16px Inter, Segoe UI, sans-serif; }
+      .detail { fill: #a8c9b8; font: 400 14px Inter, Segoe UI, sans-serif; }
+      .metric { fill: #071a14; font: 800 20px Inter, Segoe UI, sans-serif; }
+      .node { fill: #102a20; stroke: #2f684d; stroke-width: 1.5; }
+      .line { fill: none; stroke: #79e6ae; stroke-width: 2.5; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="650" rx="28" fill="url(#background)"/>
+  <circle cx="1080" cy="80" r="170" fill="#1c7c52" opacity=".10"/>
+  <circle cx="80" cy="600" r="220" fill="#1e8190" opacity=".08"/>
+
+  <text x="60" y="58" class="heading">One queryset. Three explicit fetch policies.</text>
+  <text x="60" y="88" class="subheading">The same loop behaves differently depending on the contract you choose.</text>
+
+  <g transform="translate(50 125)" filter="url(#shadow)">
+    <rect width="1100" height="135" rx="18" fill="#0d221a" stroke="#294b3b"/>
+    <rect width="150" height="135" rx="18" fill="#18241f"/>
+    <text x="24" y="48" class="lane-title">NORMAL</text>
+    <text x="24" y="76" class="detail">Traditional lazy</text>
+    <text x="24" y="98" class="detail">fetching</text>
+
+    <rect x="190" y="33" width="185" height="70" rx="12" class="node"/>
+    <text x="215" y="63" class="label">Fetch books</text>
+    <text x="215" y="85" class="detail">1 query</text>
+    <path d="M375 68 H455" class="line"/>
+    <rect x="465" y="33" width="260" height="70" rx="12" class="node"/>
+    <text x="490" y="63" class="label">Loop touches author</text>
+    <text x="490" y="85" class="detail">1 query for every book</text>
+    <path d="M725 68 H830" class="line"/>
+    <rect x="840" y="32" width="210" height="72" rx="36" fill="#f0b45d"/>
+    <text x="945" y="76" text-anchor="middle" class="metric">1 + N queries</text>
+  </g>
+
+  <g transform="translate(50 280)" filter="url(#shadow)">
+    <rect width="1100" height="135" rx="18" fill="#0d221a" stroke="#2e7653"/>
+    <rect width="150" height="135" rx="18" fill="#123326"/>
+    <text x="24" y="48" class="lane-title">PEERS</text>
+    <text x="24" y="76" class="detail">Batch missing</text>
+    <text x="24" y="98" class="detail">relations</text>
+
+    <rect x="190" y="33" width="185" height="70" rx="12" class="node"/>
+    <text x="215" y="63" class="label">Fetch books</text>
+    <text x="215" y="85" class="detail">1 query</text>
+    <path d="M375 68 H455" class="line"/>
+    <rect x="465" y="33" width="260" height="70" rx="12" class="node"/>
+    <text x="490" y="63" class="label">Batch all authors</text>
+    <text x="490" y="85" class="detail">1 query for the peer set</text>
+    <path d="M725 68 H830" class="line"/>
+    <rect x="840" y="32" width="210" height="72" rx="36" fill="url(#green)"/>
+    <text x="945" y="76" text-anchor="middle" class="metric">2 queries</text>
+  </g>
+
+  <g transform="translate(50 435)" filter="url(#shadow)">
+    <rect width="1100" height="165" rx="18" fill="#0d221a" stroke="#319c68"/>
+    <rect width="150" height="165" rx="18" fill="#123d2c"/>
+    <text x="24" y="48" class="lane-title">STRICT</text>
+    <text x="24" y="76" class="detail">Enforce an</text>
+    <text x="24" y="98" class="detail">explicit plan</text>
+
+    <rect x="190" y="47" width="235" height="70" rx="12" class="node"/>
+    <text x="215" y="77" class="label">select_related(author)</text>
+    <text x="215" y="99" class="detail">Load exactly what is needed</text>
+    <path d="M425 82 H520" class="line"/>
+    <rect x="530" y="47" width="195" height="70" rx="12" class="node"/>
+    <text x="555" y="77" class="label">Serialize safely</text>
+    <text x="555" y="99" class="detail">No lazy query</text>
+    <path d="M725 82 H830" class="line"/>
+    <rect x="840" y="46" width="210" height="72" rx="36" fill="url(#green)"/>
+    <text x="945" y="90" text-anchor="middle" class="metric">1 query</text>
+
+    <path d="M307 117 V143 H750" fill="none" stroke="#f07373" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+    <text x="765" y="149" fill="#ffaaaa" font-family="Inter, Segoe UI, sans-serif" font-size="14" font-weight="600">Missing relation → blocked</text>
+  </g>
+</svg>
+

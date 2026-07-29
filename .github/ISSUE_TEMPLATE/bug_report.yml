@@ -1,0 +1,44 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting a problem. Please provide a minimal reproduction.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Python, Django, django-fetch-guard, database, and DRF versions if relevant.
+      placeholder: Python 3.12, Django 6.0.7, django-fetch-guard 0.1.0a1, PostgreSQL 17
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the model, queryset, and field access that reproduce the issue.
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and traceback
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and read the troubleshooting guide.
+          required: true
+
