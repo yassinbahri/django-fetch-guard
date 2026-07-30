@@ -34,6 +34,19 @@ def test_explicit_select_related_satisfies_strict_mode(books, django_assert_num_
         assert book.author.name == "Ursula K. Le Guin"
 
 
+def test_admin_changelist_queryset_pattern_satisfies_strict_mode(
+    books, django_assert_num_queries
+):
+    queryset = Book.objects.select_related("author").strict().order_by("pk")
+    result = list(queryset)
+
+    with django_assert_num_queries(0):
+        assert [book.author.name for book in result] == [
+            "Ursula K. Le Guin",
+            "Octavia E. Butler",
+        ]
+
+
 def test_manager_default_mode_is_applied(books):
     book = StrictBook.objects.first()
     with pytest.raises(FieldFetchBlocked):

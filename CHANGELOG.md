@@ -5,6 +5,10 @@ Changelog, and releases use semantic versioning.
 
 ## Unreleased
 
+### Added
+
+- Django admin integration guide with strict queryset examples.
+
 ## 0.1.0 - 2026-07-29
 
 ### Added

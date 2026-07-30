@@ -254,6 +254,7 @@ python -m pytest
 - [Getting started and core API](docs/getting-started.md)
 - [API reference](docs/api-reference.md)
 - [Django compatibility and limitations](docs/django-compatibility.md)
+- [Django admin integration](docs/admin.md)
 - [Django REST Framework](docs/drf.md)
 - [Testing](docs/testing.md)
 - [Troubleshooting](docs/troubleshooting.md)
