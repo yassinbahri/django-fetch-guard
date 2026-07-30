@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://pypi.org/project/django-fetch-guard/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/django-fetch-guard.svg"></a>
+  <a href="https://pypistats.org/packages/django-fetch-guard"><img alt="Monthly downloads" src="https://img.shields.io/pypi/dm/django-fetch-guard?color=44B78B"></a>
   <a href="https://djangopackages.org/packages/p/django-fetch-guard/"><img alt="Listed on Django Packages" src="https://img.shields.io/badge/Django%20Packages-listed-8c3c26.svg"></a>
   <a href="https://www.python.org/downloads/"><img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white"></a>
   <a href="https://github.com/yassinbahri/django-fetch-guard/blob/main/docs/django-compatibility.md"><img alt="Django 4.2–6.1" src="https://img.shields.io/badge/Django-4.2%E2%80%936.1-0C4B33?logo=django&logoColor=white"></a>
