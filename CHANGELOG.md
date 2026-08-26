@@ -5,6 +5,15 @@ Changelog, and releases use semantic versioning.
 
 ## Unreleased
 
+## 0.1.1 - 2026-08-26
+
+### Added
+
+- Added copy-paste Django admin integration guidance.
+- Added Django Ninja integration guidance without adding a required Ninja
+  dependency.
+- Added tests for the documented admin and Ninja queryset patterns.
+
 ## 0.1.0 - 2026-07-29
 
 ### Added

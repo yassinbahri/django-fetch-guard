@@ -256,6 +256,8 @@ python -m pytest
 - [API reference](docs/api-reference.md)
 - [Django compatibility and limitations](docs/django-compatibility.md)
 - [Django REST Framework](docs/drf.md)
+- [Django Ninja](docs/django-ninja.md)
+- [Django admin](docs/admin.md)
 - [Testing](docs/testing.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [Contributing](CONTRIBUTING.md)

@@ -55,3 +55,27 @@ def test_strict_allows_loaded_foreign_key_id(books, django_assert_num_queries):
     book = StrictBook.objects.first()
     with django_assert_num_queries(0):
         assert book.author_id is not None
+
+
+def test_admin_documented_strict_queryset_pattern(books, django_assert_num_queries):
+    book = Book.objects.select_related("author").strict().get(
+        title="A Wizard of Earthsea"
+    )
+
+    with django_assert_num_queries(0):
+        assert book.author.name == "Ursula K. Le Guin"
+
+
+def test_ninja_documented_fetch_peers_queryset_pattern(
+    books, django_assert_num_queries
+):
+    with django_assert_num_queries(2):
+        payload = [
+            {"title": book.title, "author": {"name": book.author.name}}
+            for book in Book.objects.fetch_peers("author").order_by("pk")
+        ]
+
+    assert payload == [
+        {"title": "A Wizard of Earthsea", "author": {"name": "Ursula K. Le Guin"}},
+        {"title": "Kindred", "author": {"name": "Octavia E. Butler"}},
+    ]
