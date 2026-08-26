@@ -258,6 +258,7 @@ python -m pytest
 - [Django REST Framework](docs/drf.md)
 - [Django Ninja](docs/django-ninja.md)
 - [Django admin](docs/admin.md)
+- [Hidden fetch examples gallery](docs/examples-gallery.md)
 - [Testing](docs/testing.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [Contributing](CONTRIBUTING.md)
