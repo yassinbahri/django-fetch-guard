@@ -250,6 +250,14 @@ python -m pip install -e ".[test]"
 python -m pytest
 ```
 
+## Benchmark
+
+Run the reproducible N+1 benchmark locally with:
+
+```console
+python benchmarks/n_plus_one.py
+```
+
 ## Documentation
 
 - [Getting started and core API](docs/getting-started.md)
