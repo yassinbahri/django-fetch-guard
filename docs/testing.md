@@ -45,6 +45,29 @@ The fixture methods are:
 The fixture transforms only the supplied queryset. It does not monkey-patch
 Django globally, so tests can run concurrently without sharing policy state.
 
+## Async ORM usage
+
+Fetch policies stay attached when a queryset is consumed through Django's
+asynchronous ORM APIs:
+
+```python
+book = await (
+    Book.objects.select_related("author")
+    .strict()
+    .aget(pk=book_id)
+)
+assert book.author.name
+
+books = [
+    book
+    async for book in Book.objects.fetch_peers("author").order_by("pk")
+]
+```
+
+`strict()` still blocks an unloaded relation on an object returned by
+`aget()`. `fetch_peers()` batches the relation during async iteration just as
+it does during synchronous iteration.
+
 ## Package test commands
 
 ```console
