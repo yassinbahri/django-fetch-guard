@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-fetch-guard"
-version = "0.1.1"
+version = "0.1.2"
 description = "Prevent Django N+1 queries and accidental lazy database fetches with explicit ORM policies"
 readme = "README.md"
 requires-python = ">=3.10"

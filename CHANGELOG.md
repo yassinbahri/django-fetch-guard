@@ -5,6 +5,12 @@ Changelog, and releases use semantic versioning.
 
 ## Unreleased
 
+## 0.1.2 - 2026-09-04
+
+### Added
+
+- Added async ORM integration coverage for all fetch policies.
+
 ## 0.1.1 - 2026-08-26
 
 ### Added
