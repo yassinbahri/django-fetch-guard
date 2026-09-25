@@ -1,6 +1,13 @@
 from django.core.exceptions import ImproperlyConfigured
 
-from fetch_guard.modes import guard_queryset
+from fetch_guard.diagnostics import FetchFrameworkContext
+from fetch_guard.modes import guard_queryset, with_diagnostic_context
+
+
+def _qualified_name(value):
+    if value is None:
+        return None
+    return f"{value.__module__}.{value.__qualname__}"
 
 
 class FetchGuardMixin:
@@ -28,9 +35,17 @@ class FetchGuardMixin:
         if mode is None:
             return queryset
         try:
-            return guard_queryset(queryset, mode)
+            guarded = guard_queryset(queryset, mode)
+            serializer_class = getattr(self, "serializer_class", None)
+            return with_diagnostic_context(
+                guarded,
+                FetchFrameworkContext(
+                    view=_qualified_name(type(self)),
+                    action=getattr(self, "action", None),
+                    serializer=_qualified_name(serializer_class),
+                ),
+            )
         except (TypeError, ValueError) as exc:
             raise ImproperlyConfigured(
                 f"Invalid fetch guard policy on {type(self).__name__}: {exc}"
             ) from exc
-

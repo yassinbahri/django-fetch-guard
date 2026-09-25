@@ -6,7 +6,12 @@ from .managers import FetchGuardQuerySet, GuardedManager
 from .modes import guard_queryset, resolve_fetch_mode
 from .exceptions import FieldFetchBlocked, get_fetch_diagnostic
 from .models import FetchGuardModelMixin
-from .diagnostics import FetchCallSite, FetchDiagnostic, FetchType
+from .diagnostics import (
+    FetchCallSite,
+    FetchDiagnostic,
+    FetchFrameworkContext,
+    FetchType,
+)
 
 try:
     __version__ = version("django-fetch-guard")
@@ -19,6 +24,7 @@ __all__ = [
     "FieldFetchBlocked",
     "FetchCallSite",
     "FetchDiagnostic",
+    "FetchFrameworkContext",
     "FetchType",
     "GuardedManager",
     "get_fetch_diagnostic",

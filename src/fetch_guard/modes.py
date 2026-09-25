@@ -75,6 +75,18 @@ class LegacyGuardedModelIterable(ModelIterable):
     def __iter__(self):
         for instance in super().__iter__():
             instance.__dict__["_fetch_guard_legacy_mode"] = "raise"
+            context = getattr(self.queryset.query, "_fetch_guard_context", None)
+            if context is not None:
+                instance.__dict__["_fetch_guard_context"] = context
+            yield instance
+
+
+class DiagnosticModelIterable(ModelIterable):
+    def __iter__(self):
+        for instance in super().__iter__():
+            context = getattr(self.queryset.query, "_fetch_guard_context", None)
+            if context is not None:
+                instance.__dict__["_fetch_guard_context"] = context
             yield instance
 
 
@@ -130,3 +142,16 @@ def guard_queryset(queryset, mode="raise", *, relations=()):
             return guarded.prefetch_related(*relations)
         return guarded
     return _legacy_guard_queryset(queryset, resolved, relations)
+
+
+def with_diagnostic_context(queryset, context):
+    """Return a queryset that adds framework context to model instances."""
+    if not isinstance(queryset, models.QuerySet):
+        raise TypeError("with_diagnostic_context() requires a Django QuerySet.")
+    if queryset._fields is not None:
+        return queryset
+    clone = queryset._chain()
+    clone.query._fetch_guard_context = context
+    if clone._iterable_class is ModelIterable:
+        clone._iterable_class = DiagnosticModelIterable
+    return clone

@@ -31,6 +31,26 @@ class FetchCallSite:
 
 
 @dataclass(frozen=True, slots=True)
+class FetchFrameworkContext:
+    """Optional framework names that led to model-field access."""
+
+    view: str | None = None
+    action: str | None = None
+    serializer: str | None = None
+
+    def as_dict(self):
+        return {
+            key: value
+            for key, value in {
+                "view": self.view,
+                "action": self.action,
+                "serializer": self.serializer,
+            }.items()
+            if value is not None
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class FetchDiagnostic:
     """Structured, serializable context for a blocked implicit fetch."""
 
@@ -41,6 +61,7 @@ class FetchDiagnostic:
     django_version: str
     suggestion: str
     call_site: FetchCallSite | None = None
+    context: FetchFrameworkContext | None = None
 
     def as_dict(self):
         result = {
@@ -57,6 +78,8 @@ class FetchDiagnostic:
                 "function": self.call_site.function,
                 "line": self.call_site.line,
             }
+        if self.context is not None:
+            result["context"] = self.context.as_dict()
         return result
 
     def format(self):
@@ -143,4 +166,5 @@ def diagnostic_for_access(instance, name, *, policy="raise", call_site=None):
         django_version=get_version(),
         suggestion=_suggestion(fetch_type, name),
         call_site=call_site,
+        context=instance.__dict__.get("_fetch_guard_context"),
     )

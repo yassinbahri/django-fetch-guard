@@ -1,4 +1,9 @@
-from fetch_guard import FetchCallSite, FetchDiagnostic, FetchType
+from fetch_guard import (
+    FetchCallSite,
+    FetchDiagnostic,
+    FetchFrameworkContext,
+    FetchType,
+)
 from fetch_guard.diagnostics import diagnostic_for_access
 from tests.models import Book
 
@@ -12,6 +17,11 @@ def test_fetch_diagnostic_is_serializable():
         django_version="6.1",
         suggestion='queryset.select_related("author")',
         call_site=FetchCallSite("library.serializers", "get_author", 24),
+        context=FetchFrameworkContext(
+            view="library.views.BookViewSet",
+            action="list",
+            serializer="library.serializers.BookSerializer",
+        ),
     )
 
     assert diagnostic.as_dict() == {
@@ -25,6 +35,11 @@ def test_fetch_diagnostic_is_serializable():
             "module": "library.serializers",
             "function": "get_author",
             "line": 24,
+        },
+        "context": {
+            "view": "library.views.BookViewSet",
+            "action": "list",
+            "serializer": "library.serializers.BookSerializer",
         },
     }
 
