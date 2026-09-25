@@ -13,14 +13,21 @@ class LegacyFetchMode(Enum):
     RAISE = "raise"
 
 
-HAS_NATIVE_FETCH_MODES = all(
-    hasattr(models, name) for name in ("FETCH_ONE", "FETCH_PEERS", "RAISE")
+NATIVE_RAISE_MODE = getattr(models, "FETCH_RAISE", None) or getattr(
+    models, "RAISE", None
+)
+HAS_NATIVE_FETCH_MODES = (
+    hasattr(models, "FETCH_ONE")
+    and hasattr(models, "FETCH_PEERS")
+    and NATIVE_RAISE_MODE is not None
 )
 
 
 def _mode(name):
     if HAS_NATIVE_FETCH_MODES:
-        return getattr(models, f"FETCH_{name}" if name != "RAISE" else "RAISE")
+        if name == "RAISE":
+            return NATIVE_RAISE_MODE
+        return getattr(models, f"FETCH_{name}")
     return LegacyFetchMode[name]
 
 
@@ -50,9 +57,13 @@ def resolve_fetch_mode(mode):
             ) from exc
 
     native_modes = tuple(
-        getattr(models, name)
-        for name in ("FETCH_ONE", "FETCH_PEERS", "RAISE")
-        if hasattr(models, name)
+        mode
+        for mode in (
+            getattr(models, "FETCH_ONE", None),
+            getattr(models, "FETCH_PEERS", None),
+            NATIVE_RAISE_MODE,
+        )
+        if mode is not None
     )
     if mode in native_modes or isinstance(mode, LegacyFetchMode):
         return mode
@@ -64,6 +75,18 @@ class LegacyGuardedModelIterable(ModelIterable):
     def __iter__(self):
         for instance in super().__iter__():
             instance.__dict__["_fetch_guard_legacy_mode"] = "raise"
+            context = getattr(self.queryset.query, "_fetch_guard_context", None)
+            if context is not None:
+                instance.__dict__["_fetch_guard_context"] = context
+            yield instance
+
+
+class DiagnosticModelIterable(ModelIterable):
+    def __iter__(self):
+        for instance in super().__iter__():
+            context = getattr(self.queryset.query, "_fetch_guard_context", None)
+            if context is not None:
+                instance.__dict__["_fetch_guard_context"] = context
             yield instance
 
 
@@ -119,3 +142,16 @@ def guard_queryset(queryset, mode="raise", *, relations=()):
             return guarded.prefetch_related(*relations)
         return guarded
     return _legacy_guard_queryset(queryset, resolved, relations)
+
+
+def with_diagnostic_context(queryset, context):
+    """Return a queryset that adds framework context to model instances."""
+    if not isinstance(queryset, models.QuerySet):
+        raise TypeError("with_diagnostic_context() requires a Django QuerySet.")
+    if queryset._fields is not None:
+        return queryset
+    clone = queryset._chain()
+    clone.query._fetch_guard_context = context
+    if clone._iterable_class is ModelIterable:
+        clone._iterable_class = DiagnosticModelIterable
+    return clone

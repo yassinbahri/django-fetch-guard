@@ -1,6 +1,6 @@
 import pytest
 
-from fetch_guard import FieldFetchBlocked
+from fetch_guard import FieldFetchBlocked, FetchType, get_fetch_diagnostic
 from tests.models import Author, Book, StrictBook
 
 
@@ -24,8 +24,28 @@ def test_fetch_peers_reduces_n_plus_one_to_two_queries(books, django_assert_num_
 
 def test_strict_blocks_unfetched_relation(books):
     book = Book.objects.strict().first()
-    with pytest.raises(FieldFetchBlocked):
+    with pytest.raises(FieldFetchBlocked) as caught:
         _ = book.author
+
+    diagnostic = get_fetch_diagnostic(caught.value)
+    assert diagnostic.model == "tests.Book"
+    assert diagnostic.field == "author"
+    assert diagnostic.fetch_type is FetchType.FORWARD_FOREIGN_KEY
+    assert diagnostic.suggestion == 'queryset.select_related("author")'
+    assert diagnostic.call_site.module == __name__
+    assert "Suggested fix" in str(caught.value)
+
+
+def test_strict_diagnoses_deferred_field(books):
+    book = Book.objects.only("id").strict().first()
+
+    with pytest.raises(FieldFetchBlocked) as caught:
+        _ = book.title
+
+    diagnostic = get_fetch_diagnostic(caught.value)
+    assert diagnostic.field == "title"
+    assert diagnostic.fetch_type is FetchType.DEFERRED_FIELD
+    assert "only()" in diagnostic.suggestion
 
 
 def test_explicit_select_related_satisfies_strict_mode(books, django_assert_num_queries):

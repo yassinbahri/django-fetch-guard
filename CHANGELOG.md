@@ -5,6 +5,18 @@ Changelog, and releases use semantic versioning.
 
 ## Unreleased
 
+### Added
+
+- Added structured diagnostics for blocked relation and deferred-field fetches,
+  including safe call-site data and preload suggestions.
+- Added Django REST Framework view, action, and serializer context to fetch
+  diagnostics.
+
+### Fixed
+
+- Fixed Django 6.1 native mode detection to use the released
+  `FETCH_RAISE` constant instead of falling back to the compatibility engine.
+
 ## 0.1.2 - 2026-09-04
 
 ### Added

@@ -1,4 +1,5 @@
 import pytest
+from django import VERSION as DJANGO_VERSION
 
 from fetch_guard import guard_queryset, resolve_fetch_mode
 from fetch_guard.modes import HAS_NATIVE_FETCH_MODES, LegacyGuardedModelIterable
@@ -37,3 +38,13 @@ def test_guard_queryset_applies_native_mode():
         assert queryset._fetch_mode is resolve_fetch_mode("raise")
     else:
         assert queryset._iterable_class is LegacyGuardedModelIterable
+
+
+def test_django_61_uses_native_fetch_modes():
+    if DJANGO_VERSION < (6, 1):
+        pytest.skip("Native fetch modes were introduced in Django 6.1.")
+
+    assert HAS_NATIVE_FETCH_MODES is True
+    assert guard_queryset(Book.objects.all(), "raise")._fetch_mode is resolve_fetch_mode(
+        "raise"
+    )

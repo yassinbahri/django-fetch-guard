@@ -145,6 +145,23 @@ from fetch_guard import FieldFetchBlocked
 Import this package exception rather than Django's exception directly. It maps
 to Django's native class on 6.1 and the compatibility class on older versions.
 
+Every exception raised for a model using `FetchGuardModelMixin` also carries a
+structured diagnostic:
+
+```python
+from fetch_guard import FieldFetchBlocked, get_fetch_diagnostic
+
+try:
+    print(book.author.name)
+except FieldFetchBlocked as exc:
+    diagnostic = get_fetch_diagnostic(exc)
+    print(diagnostic.as_dict())
+```
+
+The diagnostic identifies the model, field, fetch type, Django version, safe
+application call site, and a suggested `select_related()` or
+`prefetch_related()` change. See the [diagnostics guide](docs/diagnostics.md).
+
 ## Project-wide defaults and checks
 
 Add the application when you want settings validation:
@@ -264,6 +281,7 @@ python benchmarks/n_plus_one.py
 - [API reference](docs/api-reference.md)
 - [Django compatibility and limitations](docs/django-compatibility.md)
 - [Django REST Framework](docs/drf.md)
+- [Actionable diagnostics](docs/diagnostics.md)
 - [Django Ninja](docs/django-ninja.md)
 - [Django admin](docs/admin.md)
 - [Hidden fetch examples gallery](docs/examples-gallery.md)
@@ -275,11 +293,11 @@ python benchmarks/n_plus_one.py
 
 ## Current status
 
-`0.1.0` is the initial alpha release. The core API, legacy compatibility engine, DRF mixin,
-pytest fixture, system check, and cross-version CI matrix are implemented. The
-tests include Django's request client and a live HTTP server.
-Rich call-site diagnostics and production audit sampling are planned for later
-releases.
+The core API, native and compatibility engines, DRF mixin, pytest fixture,
+system check, and cross-version CI matrix are implemented. The tests include
+Django's request client and a live HTTP server. Structured call-site
+diagnostics are available on the development branch; production audit sampling
+is planned for a later release.
 
 ## License
 
