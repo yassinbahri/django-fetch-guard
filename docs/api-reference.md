@@ -132,3 +132,19 @@ Check IDs:
 - `fetch_guard.E001`: `FETCH_GUARD` is not a dictionary.
 - `fetch_guard.E002`: `DEFAULT_MODE` is invalid.
 
+## Diagnostics
+
+### `FetchDiagnostic`
+
+Structured information attached to a blocked fetch. Use `as_dict()` for
+serialization and `format()` for a concise human-readable explanation.
+
+### `get_fetch_diagnostic(exception)`
+
+Returns the attached `FetchDiagnostic`, or `None` when the exception was not
+enriched.
+
+### `FetchType`
+
+Stable string enum classifying forward, reverse, many-to-many, and deferred
+field fetches.
