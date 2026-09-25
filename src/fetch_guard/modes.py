@@ -13,14 +13,21 @@ class LegacyFetchMode(Enum):
     RAISE = "raise"
 
 
-HAS_NATIVE_FETCH_MODES = all(
-    hasattr(models, name) for name in ("FETCH_ONE", "FETCH_PEERS", "RAISE")
+NATIVE_RAISE_MODE = getattr(models, "FETCH_RAISE", None) or getattr(
+    models, "RAISE", None
+)
+HAS_NATIVE_FETCH_MODES = (
+    hasattr(models, "FETCH_ONE")
+    and hasattr(models, "FETCH_PEERS")
+    and NATIVE_RAISE_MODE is not None
 )
 
 
 def _mode(name):
     if HAS_NATIVE_FETCH_MODES:
-        return getattr(models, f"FETCH_{name}" if name != "RAISE" else "RAISE")
+        if name == "RAISE":
+            return NATIVE_RAISE_MODE
+        return getattr(models, f"FETCH_{name}")
     return LegacyFetchMode[name]
 
 
@@ -50,9 +57,13 @@ def resolve_fetch_mode(mode):
             ) from exc
 
     native_modes = tuple(
-        getattr(models, name)
-        for name in ("FETCH_ONE", "FETCH_PEERS", "RAISE")
-        if hasattr(models, name)
+        mode
+        for mode in (
+            getattr(models, "FETCH_ONE", None),
+            getattr(models, "FETCH_PEERS", None),
+            NATIVE_RAISE_MODE,
+        )
+        if mode is not None
     )
     if mode in native_modes or isinstance(mode, LegacyFetchMode):
         return mode
